@@ -32,6 +32,29 @@ const fmtDate = (d) => {
 
 const api = (proxyPath, path) => `${proxyPath}${path}`;
 
+/* ── 共享样式 ── */
+const btnStyle = {
+  background: "rgba(255,255,255,.06)",
+  border: "1px solid rgba(255,255,255,.1)",
+  color: "#e8e4f0",
+  borderRadius: 10,
+  width: 38,
+  height: 38,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  flexShrink: 0,
+};
+
+const cardStyle = {
+  background: "rgba(255,255,255,.04)",
+  borderRadius: 14,
+  padding: 14,
+  border: "1px solid rgba(255,255,255,.06)",
+};
+
+/* ── 主页面 ── */
 /* ── 主页面 ── */
 export default function App() {
   const [page, setPage] = useState("home");       // home | add | detail:{id}
