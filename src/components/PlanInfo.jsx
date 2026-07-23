@@ -30,7 +30,7 @@ export default function PlanInfo({ provider }) {
   const planLabel = plan ? plan[0].toUpperCase() + plan.slice(1) : "-";
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3.5">
       <motion.div {...cardAnim} className="rounded-2xl border border-card-border bg-card p-4">
         <p className="text-[10px] uppercase tracking-wider text-ink3">Plan Type</p>
         <p className="mt-2 text-[22px] font-semibold leading-none text-ink">{planLabel}</p>
