@@ -63,13 +63,13 @@ export default function QuotaCard({ bucket, now }) {
   const remaining = Math.max(0, bucket.quota - bucket.used);
   const resetIn = bucket.resetAt ? bucket.resetAt - now : null;
   const color =
-    pct >= 85 ? "var(--color-danger)" : pct >= 60 ? "var(--color-warn)" : "var(--color-accent)";
+    pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-accent)";
   const counted = useCountUp(pct);
 
   return (
     <motion.div
       variants={itemVariant}
-      className="rounded-2xl bg-white p-5 shadow-card transition-shadow duration-200 hover:shadow-card-hover"
+      className="rounded-2xl bg-card p-5 transition-colors duration-150 hover:bg-card-hover"
     >
       <div className="flex items-center justify-between">
         <span className="text-[13px] font-medium text-ink">{bucket.label}</span>
@@ -94,10 +94,7 @@ export default function QuotaCard({ bucket, now }) {
       <div className="mt-3.5 h-2 w-full overflow-hidden rounded-full bg-track">
         <motion.div
           className="h-full rounded-full"
-          style={{
-            background: color,
-            boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.35)",
-          }}
+          style={{ background: color }}
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(pct, 100)}%` }}
           transition={{ type: "spring", stiffness: 90, damping: 18, mass: 0.9 }}

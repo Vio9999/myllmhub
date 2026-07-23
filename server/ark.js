@@ -12,7 +12,6 @@ const UA =
 // 窗口定义：key 对应返回字段 AFP<Cap(key)>
 const WINDOWS = [
   { key: "fiveHour", label: "5 小时", short: "5h", seconds: 18000 },
-  { key: "daily", label: "今日", short: "日", seconds: 86400 },
   { key: "weekly", label: "本周", short: "周", seconds: 604800 },
   { key: "monthly", label: "本月", short: "月", seconds: 2592000 },
 ];

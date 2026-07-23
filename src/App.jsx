@@ -48,19 +48,19 @@ export default function App() {
   return (
     <div className="min-h-dvh">
       <header className="sticky top-0 z-10 border-b border-line bg-soft">
-        <div className="mx-auto flex max-w-md items-center justify-between px-4 py-3">
-          <div>
-            <h1 className="text-[16px] font-semibold tracking-tight text-ink">
-              额度监控
+        <div className="relative mx-auto flex max-w-md items-center justify-center px-4 py-3.5">
+          <div className="text-center">
+            <h1 className="font-hand text-[30px] font-bold leading-none text-ink">
+              LLM HUB
             </h1>
-            <p className="mt-0.5 text-[11px] text-ink2">
+            <p className="mt-1 text-[11px] text-ink2">
               {lastFetch ? `更新于 ${fmtClock(lastFetch)}` : "加载中…"}
             </p>
           </div>
           <button
             onClick={refresh}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-[13px] font-medium text-white shadow-sm transition active:scale-95 disabled:opacity-60"
+            className="absolute right-4 inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-[13px] font-medium text-white transition active:scale-95 disabled:opacity-60"
           >
             {loading && (
               <span className="size-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />

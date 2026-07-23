@@ -1,22 +1,30 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/caveat-700.woff2") format("woff2");
+}
+
 @theme {
   --color-ink: #0f1419;
-  --color-ink2: #626b78;
-  --color-ink3: #aab2bd;
-  --color-line: #eceef2;
-  --color-track: #eef0f4;
-  --color-soft: #f5f6f8;
-  --color-accent: #2f6bff;
-  --color-accent-soft: #eaf1ff;
+  --color-ink2: #6b7280;
+  --color-ink3: #9ca3af;
+  --color-line: #e2e6ec;
+  --color-track: #e0e4ea;
+  --color-soft: #fafbfc;
+  --color-card: #eef0f3;
+  --color-card-hover: #e6eaef;
+  --color-accent: #111418;
+  --color-accent-soft: #e2e6ec;
   --color-danger: #ef4444;
   --color-danger-soft: #fdecec;
   --color-warn: #f59e0b;
   --color-warn-soft: #fef3e2;
-  --color-ok: #10b981;
 
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 2px 6px rgba(15, 23, 42, 0.04);
-  --shadow-card-hover: 0 6px 16px rgba(15, 23, 42, 0.09), 0 2px 6px rgba(15, 23, 42, 0.05);
+  --font-hand: "Caveat", "Snell Roundhand", "Bradley Hand", cursive;
 }
 
 * {
