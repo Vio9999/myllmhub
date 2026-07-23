@@ -25,6 +25,8 @@
   --color-warn: #f59e0b;
   --color-warn-soft: #fef3e2;
 
+  --shadow-card: 0 2px 5px rgba(15, 23, 42, 0.05);
+
   --font-hand: "Caveat", "Snell Roundhand", "Bradley Hand", cursive;
 }
 
