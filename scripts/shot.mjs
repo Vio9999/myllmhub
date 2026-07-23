@@ -1,0 +1,10 @@
+import { chromium } from "playwright";
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 390, height: 844 } });
+p.on("console", (m) => console.log("CONSOLE:", m.type(), m.text()));
+p.on("pageerror", (e) => console.log("PAGEERROR:", e.message));
+await p.goto("http://localhost:5173", { waitUntil: "networkidle", timeout: 15000 });
+await p.waitForTimeout(2500);
+await p.screenshot({ path: "/tmp/myllmhub-shot.png", fullPage: true });
+console.log("OK saved /tmp/myllmhub-shot.png");
+await b.close();

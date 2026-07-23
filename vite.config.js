@@ -1,42 +1,29 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import path from "path";
+import { fetchAll } from "./server/adapters.js";
 
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  server: {
-    proxy: {
-      "/proxy/ark": {
-        target: "https://ark.cn-beijing.volces.com",
-        changeOrigin: true,
-        rewrite: (p) => p.replace(/^\/proxy\/ark/, ""),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+  return {
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: "api-dev",
+        configureServer(server) {
+          server.middlewares.use("/api/usage", async (_req, res) => {
+            try {
+              const out = await fetchAll({ ARK_COOKIE: env.ARK_COOKIE });
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify(out));
+            } catch (e) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: e.message }));
+            }
+          });
+        },
       },
-      "/proxy/openai": {
-        target: "https://api.openai.com",
-        changeOrigin: true,
-        rewrite: (p) => p.replace(/^\/proxy\/openai/, ""),
-      },
-      "/proxy/anthropic": {
-        target: "https://api.anthropic.com",
-        changeOrigin: true,
-        rewrite: (p) => p.replace(/^\/proxy\/anthropic/, ""),
-      },
-      "/proxy/deepseek": {
-        target: "https://api.deepseek.com",
-        changeOrigin: true,
-        rewrite: (p) => p.replace(/^\/proxy\/deepseek/, ""),
-      },
-      "/proxy/gemini": {
-        target: "https://generativelanguage.googleapis.com",
-        changeOrigin: true,
-        rewrite: (p) => p.replace(/^\/proxy\/gemini/, ""),
-      },
-    },
-  },
+    ],
+  };
 });
