@@ -91,7 +91,7 @@ export default function QuotaCard({ bucket, now }) {
         </span>
         <span className="text-sm font-medium text-ink2">%</span>
       </div>
-      <div className="mt-3.5 h-2 w-full overflow-hidden rounded-full bg-white">
+      <div className="mt-3.5 h-2 w-full overflow-hidden rounded-full bg-transparent">
         <motion.div
           className="h-full rounded-full"
           style={{ background: barColor }}
