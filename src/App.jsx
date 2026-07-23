@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { fetchUsage } from "./lib/api";
+import { parseArk } from "./lib/ark";
 import QuotaCard from "./components/QuotaCard";
 import PlanInfo from "./components/PlanInfo";
+
+// 方舟控制台用量页：点 Refresh 会打开它，用户在页面上点书签抓最新数据。
+const ARK_CONSOLE =
+  "https://console.volcengine.com/ark/region:cn-beijing/subscription/agent-plan";
+const CACHE_KEY = "llmhub:cache:v1";
 
 function fmtClock(ts) {
   if (!ts) return "";
@@ -11,40 +16,65 @@ function fmtClock(ts) {
   return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const c = JSON.parse(raw);
+    return { data: c.data, at: c.at };
+  } catch {
+    return null;
+  }
+}
+
+function saveCache(data, at) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ data, at }));
+  } catch {
+    /* 忽略配额错误 */
+  }
+}
+
 const containerVariant = {
   hidden: {},
   show: { transition: { staggerChildren: 0.05, delayChildren: 0.04 } },
 };
 
 export default function App() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(() => loadCache()?.data ?? null);
   const [error, setError] = useState(null);
-  const [lastFetch, setLastFetch] = useState(null);
+  const [lastFetch, setLastFetch] = useState(() => loadCache()?.at ?? null);
   const [now, setNow] = useState(Date.now());
 
-  const refresh = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // 链接里带 #import= 就是书签抓回来的数据：解析 -> 显示 -> 存缓存 -> 清掉 hash
+  useEffect(() => {
+    const m = window.location.hash.match(/#import=(.+)$/);
+    if (!m) return;
     try {
-      const d = await fetchUsage();
-      setData(d);
-      setLastFetch(Date.now());
+      const bundle = JSON.parse(decodeURIComponent(m[1]));
+      const arr = [parseArk(bundle)];
+      const at = bundle.at || Date.now();
+      setData(arr);
+      setLastFetch(at);
+      setError(null);
+      saveCache(arr, at);
     } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
+      setError("数据解析失败: " + e.message);
     }
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
   }, []);
 
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+  // “刷新”= 打开方舟控制台，去点书签抓最新数据
+  const refresh = useCallback(() => {
+    window.open(ARK_CONSOLE, "_blank", "noopener");
+  }, []);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
+
+  const isEmpty = !data && !error;
 
   return (
     <div className="min-h-dvh">
@@ -54,16 +84,12 @@ export default function App() {
           <div className="absolute right-6 flex flex-col items-end gap-1">
             <button
               onClick={refresh}
-              disabled={loading}
-              className="inline-flex items-center gap-1.5 py-0.5 text-[12px] font-medium text-ink underline underline-offset-4 decoration-1 decoration-ink2/50 transition active:scale-95 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 py-0.5 text-[12px] font-medium text-ink underline underline-offset-4 decoration-1 decoration-ink2/50 transition active:scale-95"
             >
-              {loading && (
-                <span className="size-3 animate-spin rounded-full border-2 border-ink2/20 border-t-ink" />
-              )}
-              {loading ? "Refreshing" : "Refresh"}
+              Refresh
             </button>
             <p className="text-[10px] text-ink3">
-              {lastFetch ? `Updated ${fmtClock(lastFetch)}` : "Loading…"}
+              {lastFetch ? `Updated ${fmtClock(lastFetch)}` : "Tap Refresh →"}
             </p>
           </div>
         </div>
@@ -115,10 +141,14 @@ export default function App() {
           ))}
         </AnimatePresence>
 
-        {!data && !error && (
-          <div className="flex flex-col items-center gap-3 py-24 text-[13px] text-ink2">
-            <span className="size-5 animate-spin rounded-full border-2 border-line border-t-accent" />
-            <span>Loading…</span>
+        {isEmpty && (
+          <div className="flex flex-col items-center gap-3 py-24 text-center text-[13px] text-ink2">
+            <span className="text-[15px] font-medium text-ink">还没有数据</span>
+            <span className="text-ink3">
+              点右上角 Refresh 打开方舟控制台，
+              <br />
+              再点你存的 LLM HUB 书签，数据就会回来。
+            </span>
           </div>
         )}
       </main>
