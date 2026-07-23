@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#fafbfc" />
     <title>LLM HUB</title>
+
+    <!-- PWA / 主屏图标 -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <!-- 故意不设 apple-mobile-web-app-capable / display:standalone：让 App 用普通 Safari 打开（不全屏）。
+         原因：全屏 PWA 里 iOS 不给书签入口，书签抓数据的刷新链路走不通；
+         且书签数据也回不到全屏 App（隔离）。要全屏就得换后端方案（暂不要后端）。 -->
+    <meta name="apple-mobile-web-app-title" content="LLM HUB" />
   </head>
   <body>
     <div id="root"></div>
