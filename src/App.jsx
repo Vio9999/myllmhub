@@ -98,7 +98,7 @@ export default function App() {
               ) : (
                 <>
                   <PlanInfo provider={p} />
-                  <div className="my-[26px] h-px bg-black/[0.07]" />
+                  <div className="my-[32px] h-px bg-black/[0.07]" />
                   <motion.div
                     variants={containerVariant}
                     initial="hidden"
