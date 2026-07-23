@@ -30,13 +30,13 @@ export default function PlanInfo({ provider }) {
   const planLabel = plan ? plan[0].toUpperCase() + plan.slice(1) : "-";
 
   return (
-    <div className="grid grid-cols-2 gap-3.5">
-      <motion.div {...cardAnim} className="rounded-2xl border border-card-border bg-card p-4">
+    <div className="grid grid-cols-2 gap-4">
+      <motion.div {...cardAnim} className="rounded-2xl bg-card p-4">
         <p className="text-[10px] uppercase tracking-wider text-ink3">Plan Type</p>
         <p className="mt-2 text-[22px] font-semibold leading-none text-ink">{planLabel}</p>
         <p className="mt-3 text-[11px] text-ink3">Quota {fmtNum(quota)} AFP</p>
       </motion.div>
-      <motion.div {...cardAnim} className="rounded-2xl border border-card-border bg-card p-4">
+      <motion.div {...cardAnim} className="rounded-2xl bg-card p-4">
         <p className="text-[10px] uppercase tracking-wider text-ink3">Plan Period</p>
         <p className="mt-2 text-[22px] font-semibold leading-none text-ink">
           {days != null ? `${days} Days` : "-"}

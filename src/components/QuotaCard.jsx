@@ -72,10 +72,10 @@ export default function QuotaCard({ bucket, now }) {
   return (
     <motion.div
       variants={itemVariant}
-      className="rounded-2xl border border-card-border bg-card p-4 transition-colors duration-150 hover:bg-card-hover"
+      className="rounded-2xl bg-card p-4 transition-colors duration-150 hover:bg-card-hover"
     >
       <div className="flex items-center justify-between">
-        <span className="text-[15px] font-medium text-ink2">{bucket.label}</span>
+        <span className="text-[15px] font-light text-[#000000]">{bucket.label}</span>
         {resetIn != null && (
           <span className="rounded-md bg-soft px-1.5 py-0.5 text-[10px] text-ink2">
             {fmtCountdown(resetIn)}
