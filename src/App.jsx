@@ -48,7 +48,7 @@ export default function App() {
   return (
     <div className="min-h-dvh">
       <header className="sticky top-0 z-10 border-b border-line bg-soft">
-        <div className="relative mx-auto flex max-w-md items-center justify-center px-4 py-3.5">
+        <div className="relative mx-auto flex max-w-md items-center justify-center px-6 py-3.5">
           <div className="text-center">
             <h1 className="font-hand text-[30px] font-bold leading-none text-ink">
               LLM HUB
@@ -60,7 +60,7 @@ export default function App() {
           <button
             onClick={refresh}
             disabled={loading}
-            className="absolute right-4 inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-[13px] font-medium text-white transition active:scale-95 disabled:opacity-60"
+            className="absolute right-6 inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-[13px] font-medium text-white transition active:scale-95 disabled:opacity-60"
           >
             {loading && (
               <span className="size-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -70,7 +70,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-md px-4 py-5">
+      <main className="mx-auto max-w-md px-6 py-6">
         {error && (
           <div className="mb-4 rounded-xl bg-danger-soft p-3 text-[13px] text-danger">
             {error}
@@ -79,7 +79,7 @@ export default function App() {
 
         <AnimatePresence mode="popLayout">
           {data?.map((p) => (
-            <motion.section key={p.id} layout exit={{ opacity: 0 }} className="mb-7">
+            <motion.section key={p.id} layout exit={{ opacity: 0 }} className="mb-8">
               <div className="mb-3 flex items-center gap-2 px-1">
                 <span className="size-1.5 rounded-full bg-accent" />
                 <span className="text-[13px] font-semibold text-ink">{p.name}</span>
@@ -101,7 +101,7 @@ export default function App() {
                   variants={containerVariant}
                   initial="hidden"
                   animate="show"
-                  className="grid grid-cols-1 gap-3"
+                  className="grid grid-cols-1 gap-3.5"
                 >
                   {p.buckets?.map((b) => (
                     <QuotaCard key={b.key} bucket={b} now={now} />

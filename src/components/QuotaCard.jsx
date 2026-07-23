@@ -60,19 +60,21 @@ const itemVariant = {
 
 export default function QuotaCard({ bucket, now }) {
   const pct = bucket.quota > 0 ? (bucket.used / bucket.quota) * 100 : 0;
-  const remaining = Math.max(0, bucket.quota - bucket.used);
   const resetIn = bucket.resetAt ? bucket.resetAt - now : null;
-  const color =
-    pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-accent)";
+  // 数字：超额才跳橙红，平时黑；进度条：超额才跳橙红，平时灰
+  const textColor =
+    pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-ink)";
+  const barColor =
+    pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-ink3)";
   const counted = useCountUp(pct);
 
   return (
     <motion.div
       variants={itemVariant}
-      className="rounded-2xl bg-card p-5 transition-colors duration-150 hover:bg-card-hover"
+      className="rounded-2xl bg-card p-4 transition-colors duration-150 hover:bg-card-hover"
     >
       <div className="flex items-center justify-between">
-        <span className="text-[13px] font-medium text-ink">{bucket.label}</span>
+        <span className="text-[15px] font-medium text-ink2">{bucket.label}</span>
         {resetIn != null && (
           <span className="rounded-md bg-soft px-1.5 py-0.5 text-[10px] text-ink2">
             {fmtCountdown(resetIn)}
@@ -82,26 +84,25 @@ export default function QuotaCard({ bucket, now }) {
       <div className="mt-3 flex items-baseline gap-1">
         <span
           className="text-[34px] font-semibold leading-none tracking-tight tabular-nums"
-          style={{ color }}
+          style={{ color: textColor }}
         >
           {counted.toFixed(1)}
         </span>
         <span className="text-sm font-medium text-ink2">%</span>
       </div>
-      <div className="mt-1.5 text-[11px] text-ink2">
-        已用 {fmtNum(bucket.used)} / {fmtNum(bucket.quota)} {bucket.unit}
-      </div>
-      <div className="mt-3.5 h-2 w-full overflow-hidden rounded-full bg-track">
+      <div className="mt-3.5 h-2 w-full overflow-hidden rounded-full bg-white">
         <motion.div
           className="h-full rounded-full"
-          style={{ background: color }}
+          style={{ background: barColor }}
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(pct, 100)}%` }}
           transition={{ type: "spring", stiffness: 90, damping: 18, mass: 0.9 }}
         />
       </div>
       <div className="mt-2.5 flex justify-between text-[11px] text-ink3">
-        <span>剩 {fmtNum(remaining)}</span>
+        <span>
+          已用 {fmtNum(bucket.used)} / {fmtNum(bucket.quota)} {bucket.unit}
+        </span>
         <span>重置 {fmtTime(bucket.resetAt)}</span>
       </div>
     </motion.div>
