@@ -16,7 +16,8 @@
   --color-track: #e0e4ea;
   --color-soft: #fafbfc;
   --color-card: #f5f6f7;
-  --color-card-hover: #edeef0;
+  --color-card-hover: #e6e8ea;
+  --color-card-border: #edeef0;
   --color-bar: #bcbdbe;
   --color-accent: #111418;
   --color-accent-soft: #e2e6ec;
@@ -24,8 +25,6 @@
   --color-danger-soft: #fdecec;
   --color-warn: #f59e0b;
   --color-warn-soft: #fef3e2;
-
-  --shadow-card: 0 2px 5px rgba(15, 23, 42, 0.05);
 
   --font-hand: "Caveat", "Snell Roundhand", "Bradley Hand", cursive;
 }

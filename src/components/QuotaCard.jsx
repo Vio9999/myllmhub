@@ -72,7 +72,7 @@ export default function QuotaCard({ bucket, now }) {
   return (
     <motion.div
       variants={itemVariant}
-      className="rounded-2xl bg-card p-4 shadow-card transition-colors duration-150 hover:bg-card-hover"
+      className="rounded-2xl border border-card-border bg-card p-4 transition-colors duration-150 hover:bg-card-hover"
     >
       <div className="flex items-center justify-between">
         <span className="text-[15px] font-medium text-ink2">{bucket.label}</span>
