@@ -65,7 +65,7 @@ export default function QuotaCard({ bucket, now }) {
   const textColor =
     pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-ink)";
   const barColor =
-    pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-ink3)";
+    pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-bar)";
   const counted = useCountUp(pct);
 
   return (
