@@ -79,7 +79,7 @@ export default function App() {
         <AnimatePresence mode="popLayout">
           {data?.map((p) => (
             <motion.section key={p.id} layout exit={{ opacity: 0 }} className="mb-12">
-              <div className="mb-5 flex items-center gap-2 px-1">
+              <div className="-mt-0.5 mb-[26px] flex items-center gap-2 px-1">
                 <span className="size-1.5 rounded-full bg-accent" />
                 <span className="text-[13px] font-semibold text-ink">{p.name}</span>
                 {p.plan && (
@@ -98,12 +98,12 @@ export default function App() {
               ) : (
                 <>
                   <PlanInfo provider={p} />
-                  <div className="my-10 h-px bg-black/[0.07]" />
+                  <div className="my-[26px] h-px bg-black/[0.07]" />
                   <motion.div
                     variants={containerVariant}
                     initial="hidden"
                     animate="show"
-                    className="grid grid-cols-1 gap-6"
+                    className="grid grid-cols-1 gap-[26px]"
                   >
                     {p.buckets?.map((b) => (
                       <QuotaCard key={b.key} bucket={b} now={now} />
