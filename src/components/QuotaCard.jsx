@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 
 function fmtNum(n) {
@@ -25,44 +26,87 @@ function fmtTime(ts) {
   return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+// 目标值变化时，从当前显示值平滑过渡到新值（easeOutCubic）
+function useCountUp(target, duration = 0.7) {
+  const [val, setVal] = useState(0);
+  const fromRef = useRef(0);
+  const rafRef = useRef(0);
+  useEffect(() => {
+    const from = fromRef.current;
+    const to = target;
+    if (from === to) return;
+    const start = performance.now();
+    const tick = (t) => {
+      const p = Math.min(1, (t - start) / (duration * 1000));
+      const e = 1 - Math.pow(1 - p, 3);
+      setVal(from + (to - from) * e);
+      if (p < 1) rafRef.current = requestAnimationFrame(tick);
+      else fromRef.current = to;
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target, duration]);
+  return val;
+}
+
+const itemVariant = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 320, damping: 26 },
+  },
+};
+
 export default function QuotaCard({ bucket, now }) {
   const pct = bucket.quota > 0 ? (bucket.used / bucket.quota) * 100 : 0;
   const remaining = Math.max(0, bucket.quota - bucket.used);
   const resetIn = bucket.resetAt ? bucket.resetAt - now : null;
   const color =
-    pct >= 80 ? "var(--color-danger)" : pct >= 50 ? "var(--color-warn)" : "var(--color-accent)";
+    pct >= 85 ? "var(--color-danger)" : pct >= 60 ? "var(--color-warn)" : "var(--color-accent)";
+  const counted = useCountUp(pct);
 
   return (
-    <div className="rounded-xl border border-line bg-white p-4">
+    <motion.div
+      variants={itemVariant}
+      className="rounded-2xl bg-white p-5 shadow-card transition-shadow duration-200 hover:shadow-card-hover"
+    >
       <div className="flex items-center justify-between">
         <span className="text-[13px] font-medium text-ink">{bucket.label}</span>
-        <span className="text-[11px] text-ink2">
-          {resetIn != null ? fmtCountdown(resetIn) : ""}
-        </span>
+        {resetIn != null && (
+          <span className="rounded-md bg-soft px-1.5 py-0.5 text-[10px] text-ink2">
+            {fmtCountdown(resetIn)}
+          </span>
+        )}
       </div>
-      <div className="mt-3 flex items-baseline gap-1.5">
-        <span className="text-[26px] font-semibold leading-none tracking-tight" style={{ color }}>
-          {pct.toFixed(1)}
-          <span className="text-sm font-medium">%</span>
+      <div className="mt-3 flex items-baseline gap-1">
+        <span
+          className="text-[34px] font-semibold leading-none tracking-tight tabular-nums"
+          style={{ color }}
+        >
+          {counted.toFixed(1)}
         </span>
-        <span className="text-[11px] text-ink2">已用</span>
+        <span className="text-sm font-medium text-ink2">%</span>
       </div>
       <div className="mt-1.5 text-[11px] text-ink2">
-        {fmtNum(bucket.used)} / {fmtNum(bucket.quota)} {bucket.unit}
+        已用 {fmtNum(bucket.used)} / {fmtNum(bucket.quota)} {bucket.unit}
       </div>
-      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full" style={{ background: "var(--color-line)" }}>
+      <div className="mt-3.5 h-2 w-full overflow-hidden rounded-full bg-track">
         <motion.div
           className="h-full rounded-full"
-          style={{ background: color }}
+          style={{
+            background: color,
+            boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.35)",
+          }}
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(pct, 100)}%` }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ type: "spring", stiffness: 90, damping: 18, mass: 0.9 }}
         />
       </div>
-      <div className="mt-2 flex justify-between text-[11px] text-ink2">
+      <div className="mt-2.5 flex justify-between text-[11px] text-ink3">
         <span>剩 {fmtNum(remaining)}</span>
         <span>重置 {fmtTime(bucket.resetAt)}</span>
       </div>
-    </div>
+    </motion.div>
   );
 }
