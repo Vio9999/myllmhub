@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { parseArk } from "./lib/ark";
 import QuotaCard from "./components/QuotaCard";
 import PlanInfo from "./components/PlanInfo";
 
-// 方舟控制台用量页：点 Refresh 会打开它，用户在页面上点书签抓最新数据。
-const ARK_CONSOLE =
-  "https://console.volcengine.com/ark/region:cn-beijing/subscription/agent-plan";
 const CACHE_KEY = "llmhub:cache:v1";
+// 缓存 5 分钟内算新鲜：打开 App 自动拉一次，但 5 分钟内重复打开不再打扰方舟接口，
+// 避免频繁请求被判定异常。点 Refresh 总是强制刷新。
+const STALE_MS = 5 * 60 * 1000;
 
 function fmtClock(ts) {
   if (!ts) return "";
@@ -43,33 +42,38 @@ const containerVariant = {
 export default function App() {
   const [data, setData] = useState(() => loadCache()?.data ?? null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [lastFetch, setLastFetch] = useState(() => loadCache()?.at ?? null);
   const [now, setNow] = useState(Date.now());
 
-  // 链接里带 #import= 就是书签抓回来的数据：解析 -> 显示 -> 存缓存 -> 清掉 hash
-  useEffect(() => {
-    const m = window.location.hash.match(/#import=(.+)$/);
-    if (!m) return;
+  // 找后端要数据：后端拿着登录 cookie 去方舟抓，App 这边不碰 cookie、不点书签。
+  const fetchUsage = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const bundle = JSON.parse(decodeURIComponent(m[1]));
-      const arr = [parseArk(bundle)];
-      const at = bundle.at || Date.now();
+      const res = await fetch("/api/usage", { cache: "no-store" });
+      if (!res.ok) {
+        const e = await res.json().catch(() => ({}));
+        throw new Error(e.error || `HTTP ${res.status}`);
+      }
+      const arr = await res.json();
+      const at = Date.now();
       setData(arr);
       setLastFetch(at);
-      setError(null);
       saveCache(arr, at);
     } catch (e) {
-      setError("数据解析失败: " + e.message);
+      setError(e.message);
+    } finally {
+      setLoading(false);
     }
-    window.history.replaceState(null, "", window.location.pathname + window.location.search);
   }, []);
 
-  // “刷新”= 当前页跳到方舟控制台，去点书签抓最新数据，书签会把数据回带到本页。
-  // 用 location.href（同标签页）而不是 window.open（新标签页）：新标签页会让书签回跳到
-  // 另一个标签，看起来“回不来”；同标签页则和浏览器里直接点书签是同一条链路。
-  const refresh = useCallback(() => {
-    window.location.href = ARK_CONSOLE;
-  }, []);
+  // 打开 App：缓存超过 5 分钟（或没有）才自动拉一次，避免频繁打扰方舟接口。
+  useEffect(() => {
+    const c = loadCache();
+    const stale = !c || !c.at || Date.now() - c.at > STALE_MS;
+    if (stale) fetchUsage();
+  }, [fetchUsage]);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
@@ -85,13 +89,14 @@ export default function App() {
           <h1 className="font-hand text-[30px] font-bold leading-none text-ink">LLM HUB</h1>
           <div className="absolute right-6 flex flex-col items-end gap-1">
             <button
-              onClick={refresh}
-              className="inline-flex items-center gap-1.5 py-0.5 text-[12px] font-medium text-ink underline underline-offset-4 decoration-1 decoration-ink2/50 transition active:scale-95"
+              onClick={fetchUsage}
+              disabled={loading}
+              className="inline-flex items-center gap-1.5 py-0.5 text-[12px] font-medium text-ink underline underline-offset-4 decoration-1 decoration-ink2/50 transition active:scale-95 disabled:opacity-40"
             >
-              Refresh
+              {loading ? "Loading…" : "Refresh"}
             </button>
             <p className="text-[10px] text-ink3">
-              {lastFetch ? `Updated ${fmtClock(lastFetch)}` : "Tap Refresh →"}
+              {lastFetch ? `Updated ${fmtClock(lastFetch)}` : "Tap Refresh ->"}
             </p>
           </div>
         </div>
@@ -145,12 +150,12 @@ export default function App() {
 
         {isEmpty && (
           <div className="flex flex-col items-center gap-3 py-24 text-center text-[13px] text-ink2">
-            <span className="text-[15px] font-medium text-ink">还没有数据</span>
-            <span className="text-ink3">
-              点右上角 Refresh 打开方舟控制台，
-              <br />
-              再点你存的 LLM HUB 书签，数据就会回来。
+            <span className="text-[15px] font-medium text-ink">
+              {loading ? "加载中…" : "还没有数据"}
             </span>
+            {!loading && (
+              <span className="text-ink3">点右上角 Refresh 重新拉取。</span>
+            )}
           </div>
         )}
       </main>
