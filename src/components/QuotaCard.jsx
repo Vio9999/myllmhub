@@ -84,7 +84,7 @@ export default function QuotaCard({ bucket, now }) {
       </div>
       <div className="mt-3 flex items-baseline gap-1">
         <span
-          className="text-[28px] font-semibold leading-none tracking-tight tabular-nums"
+          className="text-[22px] font-semibold leading-none tracking-tight tabular-nums"
           style={{ color: textColor }}
         >
           {counted.toFixed(1)}
