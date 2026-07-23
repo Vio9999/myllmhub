@@ -11,9 +11,9 @@ const UA =
 
 // 窗口定义：key 对应返回字段 AFP<Cap(key)>
 const WINDOWS = [
-  { key: "fiveHour", label: "5 小时", short: "5h", seconds: 18000 },
-  { key: "weekly", label: "本周", short: "周", seconds: 604800 },
-  { key: "monthly", label: "本月", short: "月", seconds: 2592000 },
+  { key: "fiveHour", label: "5 Hours", short: "5h", seconds: 18000 },
+  { key: "weekly", label: "This Week", short: "Wk", seconds: 604800 },
+  { key: "monthly", label: "This Month", short: "Mo", seconds: 2592000 },
 ];
 
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
@@ -31,9 +31,9 @@ async function fetchAFPUsage(cookie) {
   if (!res.ok) {
     const t = await res.text().catch(() => "");
     if (res.status === 401 || res.status === 403) {
-      throw new Error("方舟 cookie 已过期或无效，请重新执行 npm run dump-cookie");
+      throw new Error("Ark cookie expired or invalid, please run 'npm run dump-cookie' again");
     }
-    throw new Error(`方舟接口 ${res.status}: ${t.slice(0, 200)}`);
+    throw new Error(`Ark API ${res.status}: ${t.slice(0, 200)}`);
   }
   const data = await res.json();
   const err = data?.ResponseMetadata?.Error;
@@ -45,7 +45,7 @@ async function fetchAFPUsage(cookie) {
 export async function fetchArk(credentials = {}) {
   const cookie = credentials.ARK_COOKIE || process.env.ARK_COOKIE || "";
   if (!cookie) {
-    throw new Error("未配置 ARK_COOKIE，请先执行 npm run dump-cookie");
+    throw new Error("ARK_COOKIE not configured, please run 'npm run dump-cookie' first");
   }
   const r = await fetchAFPUsage(cookie);
   const buckets = WINDOWS.map((w) => {
@@ -64,7 +64,7 @@ export async function fetchArk(credentials = {}) {
   });
   return {
     id: "volcengine-agentplan",
-    name: "方舟 Agent Plan",
+    name: "Ark Agent Plan",
     plan: r.PlanType || "",
     buckets,
   };

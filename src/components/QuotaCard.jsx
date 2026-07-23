@@ -3,20 +3,21 @@ import { motion } from "motion/react";
 
 function fmtNum(n) {
   if (n == null || Number.isNaN(n)) return "-";
-  if (n >= 1e8) return (n / 1e8).toFixed(2) + "亿";
-  if (n >= 1e4) return (n / 1e4).toFixed(1) + "万";
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
   return Math.round(n).toLocaleString();
 }
 
 function fmtCountdown(ms) {
-  if (ms <= 0) return "已重置";
+  if (ms <= 0) return "Reset";
   const s = Math.floor(ms / 1000);
   const d = Math.floor(s / 86400);
   const h = Math.floor((s % 86400) / 3600);
   const m = Math.floor((s % 3600) / 60);
-  if (d > 0) return `${d}天${h}小时后`;
-  if (h > 0) return `${h}小时${m}分后`;
-  return `${m}分后`;
+  if (d > 0) return `${d}d ${h}h left`;
+  if (h > 0) return `${h}h ${m}m left`;
+  return `${m}m left`;
 }
 
 function fmtTime(ts) {
@@ -61,7 +62,7 @@ const itemVariant = {
 export default function QuotaCard({ bucket, now }) {
   const pct = bucket.quota > 0 ? (bucket.used / bucket.quota) * 100 : 0;
   const resetIn = bucket.resetAt ? bucket.resetAt - now : null;
-  // 数字：超额才跳橙红，平时黑；进度条：超额才跳橙红，平时灰
+  // 数字：超额才跳橙红，平时纯黑；进度条：超额才跳橙红，平时灰
   const textColor =
     pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "#000000";
   const barColor =
@@ -101,9 +102,9 @@ export default function QuotaCard({ bucket, now }) {
       </div>
       <div className="mt-2.5 flex justify-between text-[11px] text-ink3">
         <span>
-          已用 {fmtNum(bucket.used)} / {fmtNum(bucket.quota)} {bucket.unit}
+          Used {fmtNum(bucket.used)} / {fmtNum(bucket.quota)} {bucket.unit}
         </span>
-        <span>重置 {fmtTime(bucket.resetAt)}</span>
+        <span>Reset {fmtTime(bucket.resetAt)}</span>
       </div>
     </motion.div>
   );

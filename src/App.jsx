@@ -54,15 +54,15 @@ export default function App() {
             <button
               onClick={refresh}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-card px-3 py-1.5 text-[12px] font-medium text-ink2 transition active:scale-95 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 py-0.5 text-[12px] font-medium text-ink underline underline-offset-4 decoration-1 decoration-ink2/50 transition active:scale-95 disabled:opacity-50"
             >
               {loading && (
-                <span className="size-3 animate-spin rounded-full border-2 border-ink3/40 border-t-ink2" />
+                <span className="size-3 animate-spin rounded-full border-2 border-ink2/20 border-t-ink" />
               )}
-              {loading ? "刷新中" : "刷新"}
+              {loading ? "Refreshing" : "Refresh"}
             </button>
             <p className="text-[10px] text-ink3">
-              {lastFetch ? `更新于 ${fmtClock(lastFetch)}` : "加载中…"}
+              {lastFetch ? `Updated ${fmtClock(lastFetch)}` : "Loading…"}
             </p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function App() {
                   </span>
                 )}
                 {p.buckets?.length > 0 && (
-                  <span className="text-[11px] text-ink3">{p.buckets.length} 项</span>
+                  <span className="text-[11px] text-ink3">{p.buckets.length} items</span>
                 )}
               </div>
               {p.error ? (
@@ -113,7 +113,7 @@ export default function App() {
         {!data && !error && (
           <div className="flex flex-col items-center gap-3 py-24 text-[13px] text-ink2">
             <span className="size-5 animate-spin rounded-full border-2 border-line border-t-accent" />
-            <span>加载中…</span>
+            <span>Loading…</span>
           </div>
         )}
       </main>

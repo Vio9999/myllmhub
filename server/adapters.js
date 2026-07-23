@@ -5,7 +5,7 @@
 import { fetchArk } from "./ark.js";
 
 export const adapters = [
-  { id: "volcengine-agentplan", name: "方舟 Agent Plan", fetch: fetchArk },
+  { id: "volcengine-agentplan", name: "Ark Agent Plan", fetch: fetchArk },
   // { id: "openai-codex", name: "OpenAI Codex", fetch: fetchCodex },
 ];
 
