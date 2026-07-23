@@ -21,12 +21,14 @@ const cardAnim = {
 };
 
 // 套餐概览：左卡套餐类型+限额，右卡周期+起止时间
-export default function PlanInfo({ provider }) {
+export default function PlanInfo({ provider, now }) {
   const plan = provider.plan;
   const quota = provider.planQuota;
   const start = provider.planStart;
   const end = provider.planEnd;
-  const days = start && end ? Math.max(0, Math.round((end - start) / 86400000)) : null;
+  // 剩余天数：实时随 now 递减，到期归零（向上取整，和控制台“剩余时间”一致）
+  const days =
+    end != null ? Math.max(0, Math.ceil((end - (now ?? Date.now())) / 86400000)) : null;
   const planLabel = plan ? plan[0].toUpperCase() + plan.slice(1) : "-";
 
   return (
@@ -37,7 +39,7 @@ export default function PlanInfo({ provider }) {
         <p className="mt-3 text-[11px] text-ink3">Quota {fmtNum(quota)} AFP</p>
       </motion.div>
       <motion.div {...cardAnim} className="rounded-2xl bg-card p-4">
-        <p className="text-[10px] uppercase tracking-wider text-ink3">Plan Period</p>
+        <p className="text-[10px] uppercase tracking-wider text-ink3">Remaining</p>
         <p className="mt-2 text-[22px] font-semibold leading-none text-ink">
           {days != null ? `${days} Days` : "-"}
         </p>

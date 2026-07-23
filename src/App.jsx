@@ -97,7 +97,7 @@ export default function App() {
                 </div>
               ) : (
                 <>
-                  <PlanInfo provider={p} />
+                  <PlanInfo provider={p} now={now} />
                   <div className="my-[32px] h-px bg-black/[0.07]" />
                   <motion.div
                     variants={containerVariant}
