@@ -63,7 +63,7 @@ export default function QuotaCard({ bucket, now }) {
   const resetIn = bucket.resetAt ? bucket.resetAt - now : null;
   // 数字：超额才跳橙红，平时黑；进度条：超额才跳橙红，平时灰
   const textColor =
-    pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-ink)";
+    pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "#000000";
   const barColor =
     pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-bar)";
   const counted = useCountUp(pct);
@@ -83,7 +83,7 @@ export default function QuotaCard({ bucket, now }) {
       </div>
       <div className="mt-3 flex items-baseline gap-1">
         <span
-          className="text-[34px] font-semibold leading-none tracking-tight tabular-nums"
+          className="text-[28px] font-semibold leading-none tracking-tight tabular-nums"
           style={{ color: textColor }}
         >
           {counted.toFixed(1)}
