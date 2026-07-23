@@ -64,9 +64,11 @@ export default function App() {
     window.history.replaceState(null, "", window.location.pathname + window.location.search);
   }, []);
 
-  // “刷新”= 打开方舟控制台，去点书签抓最新数据
+  // “刷新”= 当前页跳到方舟控制台，去点书签抓最新数据，书签会把数据回带到本页。
+  // 用 location.href（同标签页）而不是 window.open（新标签页）：新标签页会让书签回跳到
+  // 另一个标签，看起来“回不来”；同标签页则和浏览器里直接点书签是同一条链路。
   const refresh = useCallback(() => {
-    window.open(ARK_CONSOLE, "_blank", "noopener");
+    window.location.href = ARK_CONSOLE;
   }, []);
 
   useEffect(() => {
