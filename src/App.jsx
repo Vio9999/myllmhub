@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { fetchUsage } from "./lib/api";
 import QuotaCard from "./components/QuotaCard";
+import PlanInfo from "./components/PlanInfo";
 
 function fmtClock(ts) {
   if (!ts) return "";
@@ -95,16 +96,20 @@ export default function App() {
                   {p.error}
                 </div>
               ) : (
-                <motion.div
-                  variants={containerVariant}
-                  initial="hidden"
-                  animate="show"
-                  className="grid grid-cols-1 gap-3.5"
-                >
-                  {p.buckets?.map((b) => (
-                    <QuotaCard key={b.key} bucket={b} now={now} />
-                  ))}
-                </motion.div>
+                <>
+                  <PlanInfo provider={p} />
+                  <div className="my-5 h-px bg-black/[0.07]" />
+                  <motion.div
+                    variants={containerVariant}
+                    initial="hidden"
+                    animate="show"
+                    className="grid grid-cols-1 gap-3.5"
+                  >
+                    {p.buckets?.map((b) => (
+                      <QuotaCard key={b.key} bucket={b} now={now} />
+                    ))}
+                  </motion.div>
+                </>
               )}
             </motion.section>
           ))}

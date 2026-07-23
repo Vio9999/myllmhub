@@ -66,6 +66,10 @@ export async function fetchArk(credentials = {}) {
     id: "volcengine-agentplan",
     name: "Ark Agent Plan",
     plan: r.PlanType || "",
+    // 接口无套餐级总额度/有效期，用月度窗口代表套餐限额与周期
+    planQuota: r.AFPMonthly?.Quota ?? null,
+    planStart: r.AFPMonthly?.SubscribeTime ?? null,
+    planEnd: r.AFPMonthly?.ResetTime ?? null,
     buckets,
   };
 }
