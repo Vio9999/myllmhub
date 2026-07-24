@@ -60,7 +60,13 @@ const itemVariant = {
 };
 
 export default function QuotaCard({ bucket, now }) {
-  const pct = bucket.quota > 0 ? (bucket.used / bucket.quota) * 100 : 0;
+  // Coding Plan 直接给 percent；Agent Plan 用 used/quota 算
+  const pct =
+    bucket.percent != null
+      ? bucket.percent
+      : bucket.quota > 0
+        ? (bucket.used / bucket.quota) * 100
+        : 0;
   const resetIn = bucket.resetAt ? bucket.resetAt - now : null;
   // 数字：超额才跳橙红，平时纯黑；进度条：超额才跳橙红，平时灰
   const textColor =
@@ -68,6 +74,8 @@ export default function QuotaCard({ bucket, now }) {
   const barColor =
     pct >= 90 ? "var(--color-danger)" : pct >= 70 ? "var(--color-warn)" : "var(--color-bar)";
   const counted = useCountUp(pct);
+  // Coding Plan 没有绝对配额（unit 为 null）：隐藏 "Used X / Y" 行
+  const hasUnit = !!bucket.unit;
 
   return (
     <motion.div
@@ -101,10 +109,8 @@ export default function QuotaCard({ bucket, now }) {
         />
       </div>
       <div className="mt-2.5 flex justify-between text-[11px] text-ink3">
-        <span>
-          Used {fmtNum(bucket.used)} / {fmtNum(bucket.quota)} {bucket.unit}
-        </span>
-        <span>Reset {fmtTime(bucket.resetAt)}</span>
+        <span>{hasUnit ? `Used ${fmtNum(bucket.used)} / ${fmtNum(bucket.quota)} ${bucket.unit}` : ""}</span>
+        {bucket.resetAt != null && <span>Reset {fmtTime(bucket.resetAt)}</span>}
       </div>
     </motion.div>
   );

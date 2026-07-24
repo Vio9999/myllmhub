@@ -2,11 +2,12 @@
 // UI 和 API 层不用改。统一返回 { id, name, plan?, buckets[], error? }
 // bucket: { key, label, short, windowSeconds, quota, used, unit, resetAt, subscribeAt }
 
-import { fetchArk } from "./ark.js";
+import { fetchArk, fetchArkCoding } from "./ark.js";
 
 export const adapters = [
   { id: "volcengine-agentplan", name: "Ark Agent Plan", fetch: fetchArk },
-  // { id: "openai-codex", name: "OpenAI Codex", fetch: fetchCodex },
+  { id: "volcengine-codingplan", name: "Ark Coding Plan", fetch: fetchArkCoding },
+  // { id: "openai-codex", name: "OpenAI Codex Plus", fetch: fetchCodex },
 ];
 
 export async function fetchAll(credentials = {}) {
